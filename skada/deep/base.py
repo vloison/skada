@@ -1383,10 +1383,14 @@ class DeepDADataset(Dataset):
         return self._select_from_mask(mask, return_weights)
 
     def select_domain(self, domain_id, return_weights=True):
-        """Returns a DeepDADataset composed only of the selected domain
+        """Returns a DeepDADataset composed only of the selected domains
 
         Parameters:
         -----------
+        domain_id : int or list of int
+            the id of the domain to select. If a list is provided, all domains
+            with ids in the list are selected.
+            If a single int is provided, only the domain with that id is selected.
         return_weights : bool, optional
             whether to return the sample weights (if any). Defaults to False.
 
@@ -1395,7 +1399,7 @@ class DeepDADataset(Dataset):
         DeepDADataset
             the selected domain from the dataset.
         """
-        mask = self.sample_domain == domain_id
+        mask = torch.isin(self.sample_domain, torch.tensor(domain_id, device=self.sample_domain.device))
         return self._select_from_mask(mask, return_weights)
 
     def select_with_labels(self, return_weights=True):
